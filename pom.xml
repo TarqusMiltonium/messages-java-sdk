@@ -185,6 +185,17 @@
       <version>4.10.0</version>
     </dependency>
 
+    <!--
+      okio-jvm  is a dependency of okhttp, that should be automatically pulled in. However, inside the okhttp library, there is
+      a dependency convergence issue that flows through to this project, whereby both okhttp and okio-jvm reference
+      non-converging versions of org.jetbrains.kotlin:kotlin-stdlib-common.  Splitting the dependency out here resolves this issue.
+    -->
+    <dependency>
+      <groupId>com.squareup.okio</groupId>
+      <artifactId>okio-jvm</artifactId>
+      <version>3.2.0</version>
+    </dependency>
+
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-databind</artifactId>
