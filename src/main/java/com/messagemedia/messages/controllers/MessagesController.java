@@ -146,7 +146,6 @@ public class MessagesController extends BaseController {
         _headers.put("accept", "application/json");
         _headers.put("content-type", "application/json");
 
-
         //prepare and invoke the API call request to fetch the response
         HttpRequest _request = getClientInstance().putBody(_queryUrl, _headers, APIHelper.serialize(body));
 
@@ -155,8 +154,8 @@ public class MessagesController extends BaseController {
             getHttpCallBack().OnBeforeRequest(_request);
         }
         
-      //apply basic or hmac-based auth
-        AuthManager.apply(_queryBuilder.toString(), _request.getHeaders(), APIHelper.serialize(body));
+        //apply basic or hmac-based auth
+        AuthManager.apply(_queryBuilder.toString(), _request.getHeaders(), APIHelper.serialize(body), _request.getHttpMethod());
 
         return _request;
     }
@@ -314,7 +313,7 @@ public class MessagesController extends BaseController {
         }
 
         //apply basic or hmac-based auth
-        AuthManager.apply(_queryBuilder.toString(), _request.getHeaders(), APIHelper.serialize(body));
+        AuthManager.apply(_queryBuilder.toString(), _request.getHeaders(), APIHelper.serialize(body), _request.getHttpMethod());
         
         return _request;
     }
@@ -455,8 +454,8 @@ public class MessagesController extends BaseController {
             getHttpCallBack().OnBeforeRequest(_request);
         }
 
-      //apply basic or hmac-based auth
-        AuthManager.apply(_queryBuilder.toString(), _request.getHeaders());
+        //apply basic or hmac-based auth
+        AuthManager.apply(_queryBuilder.toString(), _request.getHeaders(), _request.getHttpMethod());
         
         return _request;
     }

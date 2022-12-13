@@ -15,8 +15,8 @@ import java.util.TimeZone;
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.messagemedia.messages.exceptions.APIException;
+import com.messagemedia.messages.http.request.HttpMethod;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -33,12 +33,11 @@ public class AuthManager {
      *
      * @param queryUrl the query url
      * @param headers the headers
-     * @throws JsonProcessingException the json processing exception
      * @throws APIException the API exception
      */
-    public static void apply(String queryUrl, Map<String, String> headers)
-            throws JsonProcessingException, APIException {
-        apply(queryUrl, headers, null);
+    public static void apply(String queryUrl, Map<String, String> headers, HttpMethod method)
+            throws APIException {
+        apply(queryUrl, headers, null, method);
     }
 
 
@@ -48,13 +47,13 @@ public class AuthManager {
      * @param queryUrl the query url
      * @param headers the headers
      * @param body the body
-     * @throws JsonProcessingException the json processing exception
+     * @param method the method
      * @throws APIException the API exception
      */
-    public static void apply(String queryUrl, Map<String, String> headers, String body)
-            throws JsonProcessingException, APIException {
+    public static void apply(String queryUrl, Map<String, String> headers, String body, HttpMethod method)
+            throws APIException {
         if (hmacIsConfigured()) {
-            addHmacHeaderTo(headers, queryUrl, body);
+            addHmacHeaderTo(headers, queryUrl, body, method);
         } else {
             headers.put("Authorization", getBasicAuthForClient());
         }
@@ -88,9 +87,10 @@ public class AuthManager {
      * @param headers the headers
      * @param url the url
      * @param body the body
+     * @param method the method
      * @throws APIException the API exception
      */
-    private static void addHmacHeaderTo(Map<String, String> headers, String url, String body) throws APIException {
+    private static void addHmacHeaderTo(Map<String, String> headers, String url, String body, HttpMethod method) throws APIException {
         if (!hmacIsConfigured()) {
             return;
         }
@@ -111,7 +111,7 @@ public class AuthManager {
                 headers.put("x-Content-MD5", contentHash);
             }
 
-            String signature = createHmacEncodedSignatureFrom(dateHeader, contentSignature, body, url, headers);
+            String signature = createHmacEncodedSignatureFrom(dateHeader, contentSignature, url, method);
             String authorizationHeader = "hmac username=\"" + Configuration.hmacAuthUserName
                     + "\", algorithm=\"hmac-sha1\", headers=\"date" + (body != null ? " x-Content-MD5" : "")
                     + " request-line\", signature=\"" + signature + "\"";
@@ -163,18 +163,16 @@ public class AuthManager {
      *
      * @param dateHeader the date header
      * @param contentSignature the content signature
-     * @param body the body
      * @param url the url
-     * @param headers the headers
+     * @param method the method
      * @return the string
      * @throws InvalidKeyException the invalid key exception
      * @throws NoSuchAlgorithmException the no such algorithm exception
      */
-    private static String createHmacEncodedSignatureFrom(String dateHeader, String contentSignature, String body,
-            String url, Map<String, String> headers)
+    private static String createHmacEncodedSignatureFrom(String dateHeader, String contentSignature, String url, HttpMethod method)
             throws InvalidKeyException, NoSuchAlgorithmException {
         String signingString = "date: " + dateHeader + "\n" + contentSignature
-                + ((body != null && !body.isEmpty()) ? "POST " : "GET ") + url.replace(Configuration.baseUri, "")
+                + method.name() + " " + url.replace(Configuration.baseUri, "")
                 + " HTTP/1.1";
 
         return getHmacEncodingFor(signingString);
