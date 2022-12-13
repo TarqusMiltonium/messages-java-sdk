@@ -53,7 +53,7 @@ public class AuthManager {
     public static void apply(String queryUrl, Map<String, String> headers, String body, HttpMethod method)
             throws APIException {
         if (hmacIsConfigured()) {
-            addHmacHeaderTo(headers, queryUrl, body, method);
+            addHmacHeaderTo(queryUrl, headers, body, method);
         } else {
             headers.put("Authorization", getBasicAuthForClient());
         }
@@ -84,13 +84,13 @@ public class AuthManager {
     /**
      * Adds the hmac header to.
      *
+     * @param url     the url
      * @param headers the headers
-     * @param url the url
-     * @param body the body
-     * @param method the method
+     * @param body    the body
+     * @param method  the method
      * @throws APIException the API exception
      */
-    private static void addHmacHeaderTo(Map<String, String> headers, String url, String body, HttpMethod method) throws APIException {
+    private static void addHmacHeaderTo(String url, Map<String, String> headers, String body, HttpMethod method) throws APIException {
         if (!hmacIsConfigured()) {
             return;
         }
