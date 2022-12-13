@@ -1,6 +1,6 @@
 package com.messagemedia.messages;
 
-import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.security.InvalidKeyException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -119,8 +119,6 @@ public class AuthManager {
             headers.put("Authorization", authorizationHeader);
         } catch (NoSuchAlgorithmException e) {
             throw new APIException("Could not find the MD5 algorithm. Check machine configuration");
-        } catch (UnsupportedEncodingException e) {
-            throw new APIException("Could not find UTF-8 encoding. Check machine configuration");
         } catch (InvalidKeyException e) {
             throw new APIException("Invalid HMAC authorization key. Check machine configuration");
         }
@@ -131,11 +129,10 @@ public class AuthManager {
      *
      * @param body the body
      * @return the md 5 hash for
-     * @throws UnsupportedEncodingException the unsupported encoding exception
      * @throws NoSuchAlgorithmException the no such algorithm exception
      */
-    private static String getMd5HashFor(String body) throws UnsupportedEncodingException, NoSuchAlgorithmException {
-        byte[] messageBytes = body.getBytes("UTF-8");
+    private static String getMd5HashFor(String body) throws NoSuchAlgorithmException {
+        byte[] messageBytes = body.getBytes(StandardCharsets.UTF_8);
         MessageDigest md5 = MessageDigest.getInstance("MD5");
         byte[] md5Bytes = md5.digest(messageBytes);
 
@@ -172,11 +169,10 @@ public class AuthManager {
      * @return the string
      * @throws InvalidKeyException the invalid key exception
      * @throws NoSuchAlgorithmException the no such algorithm exception
-     * @throws UnsupportedEncodingException the unsupported encoding exception
      */
     private static String createHmacEncodedSignatureFrom(String dateHeader, String contentSignature, String body,
             String url, Map<String, String> headers)
-            throws InvalidKeyException, NoSuchAlgorithmException, UnsupportedEncodingException {
+            throws InvalidKeyException, NoSuchAlgorithmException {
         String signingString = "date: " + dateHeader + "\n" + contentSignature
                 + ((body != null && !body.isEmpty()) ? "POST " : "GET ") + url.replace(Configuration.baseUri, "")
                 + " HTTP/1.1";
@@ -201,10 +197,9 @@ public class AuthManager {
      * @return the hmac encoding for
      * @throws NoSuchAlgorithmException the no such algorithm exception
      * @throws InvalidKeyException the invalid key exception
-     * @throws UnsupportedEncodingException the unsupported encoding exception
      */
     private static String getHmacEncodingFor(String signature)
-            throws NoSuchAlgorithmException, InvalidKeyException, UnsupportedEncodingException {
+            throws NoSuchAlgorithmException, InvalidKeyException {
         Mac hasher = Mac.getInstance(HMAC_SHA1_ALGORITHM);
         hasher.init(new SecretKeySpec(Configuration.hmacAuthPassword.getBytes(), HMAC_SHA1_ALGORITHM));
 
