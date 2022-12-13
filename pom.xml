@@ -34,6 +34,15 @@
     <url>https://github.com/messagemedia/messages-java-sdk</url>
   </scm>
 
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <java.version>11</java.version>
+    <maven.compiler.release>8</maven.compiler.release>
+    <maven.version>3.6.0</maven.version>
+
+    <jackson.version>2.9.10</jackson.version>
+  </properties>
+
   <distributionManagement>
     <snapshotRepository>
       <id>ossrh</id>
@@ -44,6 +53,60 @@
       <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
     </repository>
   </distributionManagement>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.8.1</version>
+        <inherited>true</inherited>
+        <configuration>
+          <release>${maven.compiler.release}</release>
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-enforcer-plugin</artifactId>
+        <version>3.0.0</version>
+        <executions>
+          <execution>
+            <id>enforce</id>
+            <goals>
+              <goal>enforce</goal>
+            </goals>
+            <!-- Rules here apply to (normal) Maven lifecycle invocations -->
+            <configuration>
+              <rules>
+                <requireUpperBoundDeps/>
+                <requireMavenVersion>
+                  <version>${maven.version}</version>
+                </requireMavenVersion>
+                <requireJavaVersion>
+                  <version>${java.version}</version>
+                </requireJavaVersion>
+              </rules>
+            </configuration>
+          </execution>
+        </executions>
+        <!-- Rules here apply to the explicit Maven invocation of enforcer:enforce -->
+        <!-- Rules have to be seemingly duplicated here from the <executions> rules above -->
+        <configuration>
+          <rules>
+            <requireUpperBoundDeps/>
+            <requireMavenVersion>
+              <version>${maven.version}</version>
+            </requireMavenVersion>
+            <requireJavaVersion>
+              <version>${java.version}</version>
+            </requireJavaVersion>
+          </rules>
+        </configuration>
+      </plugin>
+
+    </plugins>
+  </build>
 
   <profiles>
     <profile>
@@ -113,12 +176,6 @@
       <url>https://jitpack.io</url>
     </repository>
   </repositories>
-
-  <properties>
-    <jackson.version>2.9.10</jackson.version>
-    <maven.compiler.source>1.8</maven.compiler.source>
-    <maven.compiler.target>1.8</maven.compiler.target>
-  </properties>
 
   <dependencies>
 
