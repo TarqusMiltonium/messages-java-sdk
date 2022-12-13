@@ -27,15 +27,15 @@ public class OkClient implements HttpClient {
     
     /** Private variables to implement singleton pattern. */
     private static final Object synRoot = new Object();
-    
+
     /** The shared instance. */
     private static HttpClient sharedInstance = null;
-    
+
     /** The client. */
     private static okhttp3.OkHttpClient client = new okhttp3.OkHttpClient.Builder()
             .addInterceptor(new HttpRedirectInterceptor(true)).build();
 
-  
+
     /**
      * Gets the shared instance.
      *
@@ -227,8 +227,8 @@ public class OkClient implements HttpClient {
             contentType = httpRequest.getHeaders().get("content-type");
 
             // set request body
-            requestBody = okhttp3.RequestBody.create(okhttp3.MediaType.parse(contentType),
-                    ((HttpBodyRequest) httpRequest).getBody().getBytes());
+            requestBody = okhttp3.RequestBody.create(((HttpBodyRequest) httpRequest).getBody().getBytes(),
+                    okhttp3.MediaType.parse(contentType));
         } else {
 
             List<SimpleEntry<String, Object>> parameters = httpRequest.getParameters();
@@ -244,7 +244,7 @@ public class OkClient implements HttpClient {
                     if (param.getValue() instanceof File) {
                         multipartRequest = true;
                         multipartBuilder.addFormDataPart(param.getKey(), ((File) param.getValue()).getName(),
-                                okhttp3.RequestBody.create(okhttp3.MultipartBody.FORM, (File) param.getValue()));
+                                okhttp3.RequestBody.create((File) param.getValue(), okhttp3.MultipartBody.FORM));
                     } else {
                         multipartBuilder.addFormDataPart(param.getKey(),
                                 (param.getValue() == null) ? "" : param.getValue().toString());
@@ -260,7 +260,7 @@ public class OkClient implements HttpClient {
             } else if (httpRequest.getHttpMethod().equals(HttpMethod.GET)) {
                 requestBody = null;
             } else {
-                requestBody = okhttp3.RequestBody.create(null, new byte[0]);
+                requestBody = okhttp3.RequestBody.create(new byte[0], null);
             }
         }
 
