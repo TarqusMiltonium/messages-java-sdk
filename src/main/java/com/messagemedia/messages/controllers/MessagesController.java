@@ -188,7 +188,17 @@ public class MessagesController extends BaseController {
         return _result;
     }
 
-    
+    /**
+     * Send messages.
+     *
+     * @param body the body
+     * @return the send messages response
+     * @throws Throwable the throwable
+     */
+    public SendMessagesResponse sendMessages(final SendMessagesRequest body) throws Throwable {
+        return sendMessages(body, null);
+    }
+
     /**
      * Send messages.
      *
@@ -208,7 +218,18 @@ public class MessagesController extends BaseController {
         return _handleSendMessagesResponse(_context);
     }
 
-    
+
+    /**
+     * Send messages.
+     *
+     * @param body the body
+     * @return the send messages response
+     * @throws Throwable the throwable
+     */
+    public void sendMessagesAsync(final SendMessagesRequest body, final APICallBack<SendMessagesResponse> callBack ) {
+        sendMessagesAsync(body, null, callBack);
+    }
+
     /**
      * Send messages async.
      *
