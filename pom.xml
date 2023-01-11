@@ -238,11 +238,24 @@
       <version>2.12.2</version>
     </dependency>
 
+    <!-- test-phase Dependencies -->
+
     <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>4.13.2</version>
+      <groupId>org.testng</groupId>
+      <artifactId>testng</artifactId>
+      <version>7.7.0</version>
       <scope>test</scope>
+    </dependency>
+
+    <!-- log4j logging implementation (test-runtime dependency) -->
+    <!-- Set to scope:test to allow current-project Tests to pass without spurious slf4j Warnings,
+        but allows downstream projects to use their own implementation -->
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-slf4j-impl</artifactId>
+      <version>2.19.0</version>
+      <scope>test</scope>
+      <optional>true</optional>
     </dependency>
 
   </dependencies>
